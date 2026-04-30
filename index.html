@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+  <html lang="de">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a4ea8">
+    <meta name="description" content="Übe Dur- und Moll-Tonleitern Stufe für Stufe auf der Klaviatur — direkt im Browser.">
+    <title>Idas Tonleiterspiel</title>
+
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%231a4ea8'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.35em' font-family='-apple-system,sans-serif' font-size='90' font-weight='700' fill='white'%3E♪%3C/text%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,800;1,600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --bg: #faf6ee;
+        --bg-card: #ffffff;
+        --ink: #1a1d26;
+      --ink-soft: #4a4d59;
+      --ink-muted: #7d8090;
+      --accent: #1a4ea8;
+      --accent-deep: #0f3573;
+      --accent-moll: #7d3c98;
+      --warm: #f4b84a;
+              --warm-soft: #fce6b6;
+              --line: #e8e1d0;
+              --shadow-sm: 0 1px 3px rgba(26, 78, 168, 0.08);
+      --shadow-md: 0 8px 24px -8px rgba(26, 78, 168, 0.18), 0 2px 6px rgba(0,0,0,0.04);
+      --shadow-lg: 0 24px 48px -16px rgba(26, 78, 168, 0.22), 0 4px 12px rgba(0,0,0,0.05);
+}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+}
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+    nav { padding: 24px 0; display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 10px; font-family: 'Fraunces', serif; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; color: var(--accent-deep); }
+    .logo-mark { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; transform: rotate(-4deg); box-shadow: 3px 3px 0 var(--warm); }
+    .hero { padding: 40px 0 80px; position: relative; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--accent-deep); background: var(--warm-soft); padding: 6px 14px; border-radius: 999px; margin-bottom: 24px; }
+    .eyebrow::before { content: '♪'; color: var(--accent); font-size: 16px; margin-right: 4px; }
+    h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(40px, 7vw, 72px); line-height: 1.05; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 20px; }
+    h1 em { font-style: italic; font-weight: 600; color: var(--accent); }
+    .lead { font-size: clamp(17px, 2.2vw, 21px); line-height: 1.55; color: var(--ink-soft); max-width: 580px; margin-bottom: 36px; }
+    .cta-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 16px 28px; border-radius: 14px; font-family: inherit; font-weight: 600; font-size: 16px; text-decoration: none; transition: all 0.18s ease; cursor: pointer; border: none; }
+    .btn-primary { background: var(--accent); color: white; box-shadow: 0 4px 0 var(--accent-deep), 0 8px 16px -4px rgba(26, 78, 168, 0.4); }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-secondary { color: var(--ink); background: transparent; border: 1.5px solid var(--line); }
+    .mini-keyboard { position: relative; width: 100%; max-width: 480px; aspect-ratio: 5 / 1.6; background: white; border-radius: 16px; box-shadow: var(--shadow-lg); overflow: hidden; transform: rotate(-1deg); margin: 56px auto 0; }
+    .mini-keyboard::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0, transparent calc(100% / 7 - 1px), #d8d3c4 calc(100% / 7 - 1px), #d8d3c4 calc(100% / 7)); }
+          .mini-black { position: absolute; top: 0; width: 8.5%; height: 60%; background: var(--ink); border-radius: 0 0 4px 4px; }
+    .mini-stage { position: absolute; bottom: 14%; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; transform: translateX(-50%); box-shadow: 0 2px 8px rgba(26,78,168, 0.4); }
+    .features { padding: 80px 0; background: var(--bg-card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px; margin-top: 48px; }
+    .section-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; }
+    h2 { font-family: 'Fraunces', serif; font-size: clamp(28px, 4vw, 40px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: var(--ink); max-width: 650px; }
+    .feature-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 16px; }
+    .feature-icon.blue { background: #e7eef9; color: var(--accent); }
+        .feature-icon.purple { background: #f0e5f6; color: var(--accent-moll); }
+        .feature-icon.warm { background: var(--warm-soft); color: #b07d12; }
+        .feature h3 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    .feature p { color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+    .how { padding: 80px 0; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-top: 48px; counter-reset: step; }
+    .step { position: relative; padding: 32px 24px 24px; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--line); counter-increment: step; }
+    .step::before { content: counter(step, decimal-leading-zero); position: absolute; top: -16px; left: 24px; font-family: 'Fraunces', serif; font-size: 32px; font-weight: 600; font-style: italic; color: var(--accent); background: var(--bg); padding: 0 8px; }
+    .step h3 { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; margin-bottom: 8px; }
+    .step p { font-size: 14px; color: var(--ink-soft); line-height: 1.55; }
+    .final-cta { margin: 40px 0 80px; padding: 64px 32px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%); border-radius: 24px; text-align: center; color: white; position: relative; overflow: hidden; }
+    .final-cta h2 { color: white; margin: 0 auto 16px; font-style: italic; }
+    .final-cta p { color: rgba(255,255,255,0.85); max-width: 480px; margin: 0 auto 28px; font-size: 16px; }
+    .final-cta .btn-primary { background: white; color: var(--accent); }
+    footer { padding: 32px 0 48px; text-align: center; font-size: 13px; color: var(--ink-muted); }
+    footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    @media (max-width: 720px) { .hero { padding: 24px 0 48px; } .features, .how { padding: 56px 0; } .final-cta { padding: 48px 24px; margin: 24px 0 56px; border-radius: 20px; } }
+  </style>
+    </head>
+    <body>
+      <div class="container">
+        <nav>
+          <div class="logo">
+            <div class="logo-mark">♪</div>
+            <span>Idas Tonleiterspiel</span>
+          </div>
+        </nav>
+        <section class="hero">
+          <span class="eyebrow">Tonleitern üben — direkt im Browser</span>
+      <h1>Tonleitern lernen,<br><em>Stufe für Stufe.</em></h1>
+          <p class="lead">Tippe die 8 Stufen einer Tonleiter in der richtigen Reihenfolge auf der Klaviatur. Mit Klaviersound, Streak-Zähler und allen Dur- und Moll-Tonarten.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="spiel.html">Jetzt spielen →</a>
+            <a class="btn btn-secondary" href="#so-gehts">So funktioniert's</a>
+          </div>
+          <div class="mini-keyboard">
+            <div class="mini-black" style="left: 10.7%;"></div>
+            <div class="mini-black" style="left: 25%;"></div>
+            <div class="mini-black" style="left: 53.5%;"></div>
+            <div class="mini-black" style="left: 67.8%;"></div>
+            <div class="mini-black" style="left: 82.1%;"></div>
+            <div class="mini-stage" style="left: 7.14%;">1</div>
+            <div class="mini-stage" style="left: 21.4%;">2</div>
+            <div class="mini-stage" style="left: 35.7%;">3</div>
+            <div class="mini-stage" style="left: 50%;">4</div>
+            <div class="mini-stage" style="left: 64.3%; background: var(--warm); color: var(--ink);">5</div>
+            <div class="mini-stage" style="left: 78.6%; background: var(--warm); color: var(--ink);">6</div>
+            <div class="mini-stage" style="left: 92.9%; background: var(--warm); color: var(--ink);">7</div>
+          </div>
+        </section>
+      </div>
+      <section class="features">
+        <div class="container">
+          <div class="section-eyebrow">Was drin ist</div>
+      <h2>Alles was du zum Üben brauchst — und mehr.</h2>
+      <div class="features-grid">
+        <div class="feature">
+          <div class="feature-icon blue">🎯</div>
+          <h3>24 Tonarten</h3>
+          <p>Alle 12 Dur- und 12 Moll-Tonleitern (natürlich) — vom einfachen C-Dur bis zum kniffligen ais-Moll.</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon purple">🔊</div>
+              <h3>Klaviersound</h3>
+              <p>Bei jedem Tipp klingt die Note — so hörst du die Tonleiter aufsteigen.</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon warm">🔥</div>
+              <h3>Streak-Zähler</h3>
+              <p>Wie viele Tonleitern schaffst du fehlerfrei am Stück?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="how" id="so-gehts">
+        <div class="container">
+          <div class="section-eyebrow">So einfach geht's</div>
+          <h2>In drei Schritten zur ersten Tonleiter.</h2>
+          <div class="steps">
+            <div class="step"><h3>Tonart wird angezeigt</h3><p>Oben siehst du, welche Tonleiter dran ist — z.B. „A-Dur" — plus den Anfangston und das Halbtonmuster als Hinweis.</p></div>
+            <div class="step"><h3>Tasten tippen</h3><p>Spiele die acht Stufen nacheinander auf der Klaviatur. Richtig tippen = grün. Falsch = rot.</p></div>
+            <div class="step"><h3>Streak ausbauen</h3><p>Schaffe die ganze Tonleiter ohne Fehler — Punkte und Streak gehen hoch.</p></div>
+      </div>
+        </div>
+      </section>
+      <div class="container">
+        <div class="final-cta">
+          <h2>Bereit für die erste Tonleiter, Ida?</h2>
+          <p>Funktioniert direkt im Browser — auf iPhone, iPad oder am Computer. Keine Installation nötig.</p>
+          <a class="btn btn-primary" href="spiel.html">Los geht's →</a>
+        </div>
+        <footer>Gebaut mit ♪ — <a href="spiel.html">spielen</a></footer>
+  </div>
+</body>
+</html>
